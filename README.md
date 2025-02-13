@@ -1,10 +1,15 @@
-# voting program
+# voting
 
-Part 1 - Initialisation
-Part 2 - 
-
+![Candidate ](./diagram.png) 
 
 ## Getting Started
+part 1- setup
+part 2- poll setup, initiliazepoll
+part 3- bankrun setup, write tests
+part 4- initialise candidate, write tests
+part 5- vote, write tests
+
+part 6- challenge
 
 ### Prerequisites
 
