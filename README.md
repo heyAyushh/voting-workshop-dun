@@ -11,6 +11,10 @@ part 5- vote, write tests
 
 part 6- challenge (https://bit.ly/solwa)
 
+Signup on - 
+    1. [Superteam Earn](https://earn.superteam.fun)
+    2. [Gib Work](https://app.gib.work)
+
 ### Prerequisites
 
 - Node v18.18.0 or higher
