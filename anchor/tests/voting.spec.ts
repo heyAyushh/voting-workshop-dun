@@ -8,7 +8,7 @@ const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe("Voting", () => {
   it("initializes a poll", async () => {
-    const context = await startAnchor('', [{ name: "voting", programId: IDL }], []);
+    const context = await startAnchor('', [{ name: "voting", programId: PROGRAM_ID }], []);
     const provider = new BankrunProvider(context);
     const votingProgram = new anchor.Program<Voting>(
       IDL,
@@ -24,7 +24,7 @@ describe("Voting", () => {
 
     const [pollAddress] = PublicKey.findProgramAddressSync(
       [new anchor.BN(1).toArrayLike(Buffer, "le", 8)],
-      IDL.address,
+      votingProgram.programId,
     );
 
     const poll = await votingProgram.account.poll.fetch(pollAddress);
