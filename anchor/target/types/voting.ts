@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/voting.json`.
  */
 export type Voting = {
-  "address": "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF",
+  "address": "F69hmYgN88iUHSmcjF74sJtB4UCDjMyq9ZsExJj1swSp",
   "metadata": {
     "name": "voting",
     "version": "0.1.0",
@@ -175,6 +175,32 @@ export type Voting = {
           }
         },
         {
+          "name": "voter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              },
+              {
+                "kind": "arg",
+                "path": "pollId"
+              }
+            ]
+          }
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
@@ -217,6 +243,26 @@ export type Voting = {
         153,
         111
       ]
+    },
+    {
+      "name": "voter",
+      "discriminator": [
+        241,
+        93,
+        35,
+        191,
+        254,
+        147,
+        17,
+        202
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "alreadyVoted",
+      "msg": "You have already voted."
     }
   ],
   "types": [
@@ -260,6 +306,18 @@ export type Voting = {
           {
             "name": "candidateAmount",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "voter",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hasVoted",
+            "type": "bool"
           }
         ]
       }
