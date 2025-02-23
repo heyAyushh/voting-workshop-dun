@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/voting.json`.
  */
 export type Voting = {
-  "address": "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF",
+  "address": "F69hmYgN88iUHSmcjF74sJtB4UCDjMyq9ZsExJj1swSp",
   "metadata": {
     "name": "voting",
     "version": "0.1.0",
@@ -217,6 +217,23 @@ export type Voting = {
         153,
         111
       ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "invalidPollStart",
+      "msg": "Poll start time must be in the future."
+    },
+    {
+      "code": 6001,
+      "name": "invalidPollEnd",
+      "msg": "Poll end time must be in the future and after the poll start."
+    },
+    {
+      "code": 6002,
+      "name": "invalidUnixTimestamp",
+      "msg": "Provided value is not a valid Unix timestamp."
     }
   ],
   "types": [
