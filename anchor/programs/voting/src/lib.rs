@@ -2,7 +2,7 @@
 
 use anchor_lang::prelude::*;
 
-declare_id!("F69hmYgN88iUHSmcjF74sJtB4UCDjMyq9ZsExJj1swSp");
+declare_id!("3nz2i8Ts2Nms1y9PG6JzsMoMtywho2TdLimqfpuzLYw5");
 
 #[program]
 pub mod voting {
@@ -37,9 +37,8 @@ pub mod voting {
       let poll = &ctx.accounts.poll;
       let candidate = &mut ctx.accounts.candidate;
       
-      let clock = Clock::get()?;
-      let current_time = clock.unix_timestamp as u64;
-  
+      let current_time = Clock::get()?.unix_timestamp as u64;
+  msg!("current time {}",current_time);
       // Ensure voting happens within poll_start and poll_end
       require!(current_time >= poll.poll_start , ErrorCode::PollNotStarted);
       require!(current_time <= poll.poll_end, ErrorCode::PollEnded);

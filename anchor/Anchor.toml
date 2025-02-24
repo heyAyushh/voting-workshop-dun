@@ -6,13 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-voting = "F69hmYgN88iUHSmcjF74sJtB4UCDjMyq9ZsExJj1swSp"
+voting = "3nz2i8Ts2Nms1y9PG6JzsMoMtywho2TdLimqfpuzLYw5"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
