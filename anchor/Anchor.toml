@@ -12,7 +12,7 @@ voting = "3nz2i8Ts2Nms1y9PG6JzsMoMtywho2TdLimqfpuzLYw5"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
