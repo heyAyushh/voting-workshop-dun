@@ -1,5 +1,5 @@
 {
-  "address": "coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF",
+  "address": "41bobPsZM7w7R2ezj3oAU6phN6sowxeFtDiAX8DsyKxS",
   "metadata": {
     "name": "voting",
     "version": "0.1.0",
@@ -21,21 +21,13 @@
       ],
       "accounts": [
         {
-          "name": "signer",
+          "name": "authority",
           "writable": true,
           "signer": true
         },
         {
           "name": "poll",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "arg",
-                "path": "poll_id"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "candidate",
@@ -43,12 +35,27 @@
           "pda": {
             "seeds": [
               {
-                "kind": "arg",
-                "path": "poll_id"
+                "kind": "const",
+                "value": [
+                  99,
+                  97,
+                  110,
+                  100,
+                  105,
+                  100,
+                  97,
+                  116,
+                  101
+                ]
               },
               {
-                "kind": "arg",
-                "path": "candidate_name"
+                "kind": "account",
+                "path": "poll"
+              },
+              {
+                "kind": "account",
+                "path": "poll.next_candidate_id",
+                "account": "Poll"
               }
             ]
           }
@@ -62,10 +69,6 @@
         {
           "name": "candidate_name",
           "type": "string"
-        },
-        {
-          "name": "_poll_id",
-          "type": "u64"
         }
       ]
     },
@@ -83,7 +86,7 @@
       ],
       "accounts": [
         {
-          "name": "signer",
+          "name": "authority",
           "writable": true,
           "signer": true
         },
@@ -93,8 +96,21 @@
           "pda": {
             "seeds": [
               {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  108,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
                 "kind": "arg",
-                "path": "poll_id"
+                "path": "poll_start"
               }
             ]
           }
@@ -106,10 +122,6 @@
       ],
       "args": [
         {
-          "name": "poll_id",
-          "type": "u64"
-        },
-        {
           "name": "description",
           "type": "string"
         },
@@ -120,6 +132,10 @@
         {
           "name": "poll_end",
           "type": "u64"
+        },
+        {
+          "name": "name",
+          "type": "string"
         }
       ]
     },
@@ -137,33 +153,48 @@
       ],
       "accounts": [
         {
-          "name": "signer",
+          "name": "voter",
           "writable": true,
           "signer": true
         },
         {
           "name": "poll",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "arg",
-                "path": "poll_id"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "candidate",
+          "writable": true
+        },
+        {
+          "name": "voter_record",
           "writable": true,
           "pda": {
             "seeds": [
               {
-                "kind": "arg",
-                "path": "poll_id"
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  99,
+                  111,
+                  114,
+                  100
+                ]
               },
               {
-                "kind": "arg",
-                "path": "candidate_name"
+                "kind": "account",
+                "path": "poll.poll_id",
+                "account": "Poll"
+              },
+              {
+                "kind": "account",
+                "path": "voter"
               }
             ]
           }
@@ -173,16 +204,7 @@
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": [
-        {
-          "name": "_candidate_name",
-          "type": "string"
-        },
-        {
-          "name": "_poll_id",
-          "type": "u64"
-        }
-      ]
+      "args": []
     }
   ],
   "accounts": [
@@ -211,6 +233,56 @@
         153,
         111
       ]
+    },
+    {
+      "name": "VoterRecord",
+      "discriminator": [
+        178,
+        96,
+        138,
+        116,
+        143,
+        202,
+        115,
+        33
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidPollEndTime",
+      "msg": "Poll end time must be after start time"
+    },
+    {
+      "code": 6001,
+      "name": "PollStartTimeInPast",
+      "msg": "Poll start time must be in the future"
+    },
+    {
+      "code": 6002,
+      "name": "PollDurationTooLong",
+      "msg": "Poll duration is too long. Maximum duration is 30 days"
+    },
+    {
+      "code": 6003,
+      "name": "PollNotStarted",
+      "msg": "Poll has not started yet"
+    },
+    {
+      "code": 6004,
+      "name": "PollEnded",
+      "msg": "Poll has already ended"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidCandidate",
+      "msg": "Candidate can't be added once poll has started"
+    },
+    {
+      "code": 6006,
+      "name": "AlreadyVoted",
+      "msg": "You have already voted in this poll"
     }
   ],
   "types": [
@@ -219,6 +291,14 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "poll_id",
+            "type": "u64"
+          },
+          {
+            "name": "candidate_id",
+            "type": "u64"
+          },
           {
             "name": "candidate_name",
             "type": "string"
@@ -240,6 +320,10 @@
             "type": "u64"
           },
           {
+            "name": "name",
+            "type": "string"
+          },
+          {
             "name": "description",
             "type": "string"
           },
@@ -254,6 +338,26 @@
           {
             "name": "candidate_amount",
             "type": "u64"
+          },
+          {
+            "name": "next_candidate_id",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VoterRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "poll_id",
+            "type": "u64"
+          },
+          {
+            "name": "voter",
+            "type": "pubkey"
           }
         ]
       }
