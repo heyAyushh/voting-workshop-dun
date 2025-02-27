@@ -29,6 +29,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
+    "solana-agent-kit": "^1.4.8",
     "solana-bankrun": "^0.4.0"
   },
   "devDependencies": {
