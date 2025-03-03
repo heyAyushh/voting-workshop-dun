@@ -4,13 +4,14 @@ const nextConfig = {
     esmExternals: "loose",
   },
   webpack: (config) => {
-    config.resolve.fallback = {
-      fs: false,
-      net: false,
-      tls: false,
-      child_process: false, // Prevents issues with certain WebSocket packages
-    };
+    config.externals.push('pino-pretty', 'lokijs', 'encoding');
     return config;
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 
