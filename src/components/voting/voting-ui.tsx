@@ -1,122 +1,110 @@
-'use client'
+"use client";
 
-import { Keypair, PublicKey } from '@solana/web3.js'
-import { useMemo } from 'react'
-import { ellipsify } from '../ui/ui-layout'
-import { ExplorerLink } from '../cluster/cluster-ui'
-import { useVotingProgram, useVotingProgramAccount } from './voting-data-access'
+import { PublicKey } from "@solana/web3.js";
+import { ellipsify } from "../ui/ui-layout";
+import { ExplorerLink } from "../cluster/cluster-ui";
+import { useVotingProgram, useVotingProgramAccount } from "./voting-data-access";
 
 export function VotingCreate() {
-  const { initialize } = useVotingProgram()
+  const { initializePoll } = useVotingProgram();
 
   return (
-    <button
-      className="btn btn-xs lg:btn-md btn-primary"
-      onClick={() => initialize.mutateAsync(Keypair.generate())}
-      disabled={initialize.isPending}
-    >
-      Create {initialize.isPending && '...'}
-    </button>
-  )
+    <div className="flex justify-center my-6">
+      <button
+        className="btn btn-primary px-6 py-3 text-lg font-semibold rounded-lg shadow-lg transition-all hover:scale-105 disabled:opacity-50"
+        onClick={() =>
+          initializePoll.mutateAsync({
+            pollId: Date.now(),
+            description: "New Poll",
+            pollStart: Date.now(),
+            pollEnd: Date.now() + 86400000,
+          })
+        }
+        disabled={initializePoll.isPending}
+      >
+        {initializePoll.isPending ? "Creating..." : "Create Poll"}
+      </button>
+    </div>
+  );
 }
 
 export function VotingList() {
-  const { accounts, getProgramAccount } = useVotingProgram()
+  const { polls, getProgramAccount } = useVotingProgram();
 
   if (getProgramAccount.isLoading) {
-    return <span className="loading loading-spinner loading-lg"></span>
+    return <LoadingIndicator />;
   }
   if (!getProgramAccount.data?.value) {
     return (
-      <div className="alert alert-info flex justify-center">
-        <span>Program account not found. Make sure you have deployed the program and are on the correct cluster.</span>
-      </div>
-    )
+      <Alert message="Program account not found. Ensure the program is deployed and you're on the correct cluster." />
+    );
   }
   return (
-    <div className={'space-y-6'}>
-      {accounts.isLoading ? (
-        <span className="loading loading-spinner loading-lg"></span>
-      ) : accounts.data?.length ? (
-        <div className="grid md:grid-cols-2 gap-4">
-          {accounts.data?.map((account) => (
-            <VotingCard key={account.publicKey.toString()} account={account.publicKey} />
+    <div className="space-y-6">
+      {polls.isLoading ? (
+        <LoadingIndicator />
+      ) : polls.data?.length ? (
+        <div className="grid md:grid-cols-2 gap-6">
+          {polls.data?.map((poll) => (
+            <VotingCard key={poll.publicKey.toString()} account={poll.publicKey} />
           ))}
         </div>
       ) : (
-        <div className="text-center">
-          <h2 className={'text-2xl'}>No accounts</h2>
-          No accounts found. Create one above to get started.
-        </div>
+        <EmptyState message="No polls found. Create one above to get started." />
       )}
     </div>
-  )
+  );
 }
 
 function VotingCard({ account }: { account: PublicKey }) {
-  const { accountQuery, incrementMutation, setMutation, decrementMutation, closeMutation } = useVotingProgramAccount({
-    account,
-  })
+  const { pollQuery, vote } = useVotingProgramAccount({
+    pollId: account.toBuffer()[0],
+  });
 
-  const count = useMemo(() => accountQuery.data?.count ?? 0, [accountQuery.data?.count])
+  const poll = pollQuery.data;
 
-  return accountQuery.isLoading ? (
-    <span className="loading loading-spinner loading-lg"></span>
+  return pollQuery.isLoading ? (
+    <LoadingIndicator />
   ) : (
-    <div className="card card-bordered border-base-300 border-4 text-neutral-content">
-      <div className="card-body items-center text-center">
-        <div className="space-y-6">
-          <h2 className="card-title justify-center text-3xl cursor-pointer" onClick={() => accountQuery.refetch()}>
-            {count}
-          </h2>
-          <div className="card-actions justify-around">
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => incrementMutation.mutateAsync()}
-              disabled={incrementMutation.isPending}
-            >
-              Increment
-            </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => {
-                const value = window.prompt('Set value to:', count.toString() ?? '0')
-                if (!value || parseInt(value) === count || isNaN(parseInt(value))) {
-                  return
-                }
-                return setMutation.mutateAsync(parseInt(value))
-              }}
-              disabled={setMutation.isPending}
-            >
-              Set
-            </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => decrementMutation.mutateAsync()}
-              disabled={decrementMutation.isPending}
-            >
-              Decrement
-            </button>
-          </div>
-          <div className="text-center space-y-4">
-            <p>
-              <ExplorerLink path={`account/${account}`} label={ellipsify(account.toString())} />
-            </p>
-            <button
-              className="btn btn-xs btn-secondary btn-outline"
-              onClick={() => {
-                if (!window.confirm('Are you sure you want to close this account?')) {
-                  return
-                }
-                return closeMutation.mutateAsync()
-              }}
-              disabled={closeMutation.isPending}
-            >
-              Close
-            </button>
-          </div>
+    <div className="card bg-base-200 shadow-xl border border-gray-300 p-6 rounded-xl">
+      <div className="card-body text-center space-y-4">
+        <h2 className="text-2xl font-bold cursor-pointer hover:text-primary" onClick={() => pollQuery.refetch()}>
+          {poll?.description || "Untitled Poll"}
+        </h2>
+        <div className="flex justify-center gap-4">
+          <VoteButton label="Vote Option A" onClick={() => vote.mutateAsync({ candidateName: "Option A" })} isLoading={vote.isPending} />
+          <VoteButton label="Vote Option B" onClick={() => vote.mutateAsync({ candidateName: "Option B" })} isLoading={vote.isPending} />
         </div>
+        <ExplorerLink path={`account/${account}`} label={ellipsify(account.toString())} />
       </div>
     </div>
-  )
+  );
+}
+
+function VoteButton({ label, onClick, isLoading }) {
+  return (
+    <button
+      className="btn btn-outline px-4 py-2 font-medium transition-all hover:bg-primary hover:text-white disabled:opacity-50"
+      onClick={onClick}
+      disabled={isLoading}
+    >
+      {isLoading ? "Voting..." : label}
+    </button>
+  );
+}
+
+function LoadingIndicator() {
+  return <span className="loading loading-spinner loading-lg flex justify-center" />;
+}
+
+function Alert({ message }) {
+  return (
+    <div className="alert alert-info flex justify-center p-4 rounded-lg shadow-md">{message}</div>
+  );
+}
+
+function EmptyState({ message }) {
+  return (
+    <div className="text-center text-lg text-gray-500 py-6">{message}</div>
+  );
 }
