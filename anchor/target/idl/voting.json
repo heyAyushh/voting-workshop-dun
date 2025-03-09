@@ -213,6 +213,18 @@
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "PollNotStarted",
+      "msg": "Poll has not yet started."
+    },
+    {
+      "code": 6001,
+      "name": "PollEnded",
+      "msg": "Poll has ended."
+    }
+  ],
   "types": [
     {
       "name": "Candidate",

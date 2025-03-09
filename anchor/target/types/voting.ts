@@ -219,6 +219,18 @@ export type Voting = {
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "pollNotStarted",
+      "msg": "Poll has not yet started."
+    },
+    {
+      "code": 6001,
+      "name": "pollEnded",
+      "msg": "Poll has ended."
+    }
+  ],
   "types": [
     {
       "name": "candidate",
