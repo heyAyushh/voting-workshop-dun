@@ -64,7 +64,7 @@
           "type": "string"
         },
         {
-          "name": "_poll_id",
+          "name": "poll_id",
           "type": "u64"
         }
       ]
