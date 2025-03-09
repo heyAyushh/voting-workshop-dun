@@ -29,16 +29,15 @@ pub mod voting {
         let poll = &mut ctx.accounts.poll;
         candidate.candidate_name = candidate_name;
         candidate.candidate_votes = 0;
-        poll.candidate_amount += 1;  // Including 1st bounty fix
+        poll.candidate_amount += 1;  
         Ok(())
     }
 
     pub fn vote(ctx: Context<Vote>, _candidate_name: String, _poll_id: u64) -> Result<()> {
         let candidate = &mut ctx.accounts.candidate;
         let poll = &ctx.accounts.poll;
-        let clock = Clock::get()?;  // Get current timestamp
+        let clock = Clock::get()?; 
 
-        // Check if current time is within poll bounds
         require!(clock.unix_timestamp >= poll.poll_start as i64, VotingError::PollNotStarted);
         require!(clock.unix_timestamp <= poll.poll_end as i64, VotingError::PollEnded);
 

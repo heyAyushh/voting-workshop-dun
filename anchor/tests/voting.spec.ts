@@ -19,13 +19,12 @@ describe("Voting", () => {
 
   it("initializes a poll", async () => {
     const clock = await context.banksClient.getClock();
-    const now = Number(clock.unixTimestamp);  // Convert BigInt to number
+    const now = Number(clock.unixTimestamp); 
 
     await votingProgram.methods.initializePoll(
       new anchor.BN(1),
       "What is your favorite color?",
-      new anchor.BN(now - 100),  // Started 100 seconds ago
-      new anchor.BN(now + 1000), // Ends in 1000 seconds
+      new anchor.BN(now - 100),       new anchor.BN(now + 1000), 
     ).rpc();
 
     const [pollAddress] = PublicKey.findProgramAddressSync(
