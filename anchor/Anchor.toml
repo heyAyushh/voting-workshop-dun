@@ -5,8 +5,10 @@ anchor_version = "0.30.1"
 resolution = true
 skip-lint = false
 
+
 [programs.devnet]
 voting = "41bobPsZM7w7R2ezj3oAU6phN6sowxeFtDiAX8DsyKxS"
+
 
 [registry]
 url = "https://api.apr.dev"

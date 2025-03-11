@@ -5,6 +5,7 @@ use anchor_lang::solana_program::hash::{hash, Hash};
 
 declare_id!("41bobPsZM7w7R2ezj3oAU6phN6sowxeFtDiAX8DsyKxS");
 
+
 #[program]
 pub mod voting {
     use super::*;
@@ -26,6 +27,7 @@ pub mod voting {
         #[msg("You have already voted in this poll")]
         AlreadyVoted,
     }
+
 
     pub fn initialize_poll(
       ctx: Context<InitializePoll>,
@@ -66,6 +68,9 @@ pub mod voting {
 
       Ok(())
     }
+
+
+
 
     pub fn initialize_candidate(
       ctx: Context<InitializeCandidate>,
