@@ -5,7 +5,8 @@
  * IDL can be found at `target/idl/voting.json`.
  */
 export type Voting = {
-  "address": "D5PoKQTwT7ZDef3HtSXHiadqf5Jie3oShX2sJjASd1wP",
+
+
   "metadata": {
     "name": "voting",
     "version": "0.1.0",
