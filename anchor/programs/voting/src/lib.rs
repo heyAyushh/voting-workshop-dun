@@ -4,6 +4,7 @@ use anchor_lang::prelude::*;
 
 declare_id!("3nz2i8Ts2Nms1y9PG6JzsMoMtywho2TdLimqfpuzLYw5");
 
+
 #[program]
 pub mod voting {
     use super::*;
@@ -34,6 +35,7 @@ pub mod voting {
         candidate.candidate_votes = 0;
         Ok(())
     }
+
 
     pub fn vote(ctx: Context<Vote>, _candidate_name: String, _poll_id: u64) -> Result<()> {
         let voter = &mut ctx.accounts.voter;

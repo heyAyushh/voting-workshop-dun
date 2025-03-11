@@ -40,9 +40,11 @@ describe("Voting", () => {
     expect(poll.pollId.toNumber()).toBe(1);
     expect(poll.description).toBe("What is your favorite color?");
     expect(poll.pollStart.toNumber()).toBe(100);
+    expect(poll.candidateAmount.toNumber()).toBe(0); // Ensure initial candidate count is 0
   });
 
   it("initializes candidates", async () => {
+    // Initialize candidates
     await votingProgram.methods.initializeCandidate(
       "Pink",
       new anchor.BN(1),
@@ -51,6 +53,15 @@ describe("Voting", () => {
       "Blue",
       new anchor.BN(1),
     ).rpc();
+
+    const [pollAddress] = PublicKey.findProgramAddressSync(
+      [new anchor.BN(1).toArrayLike(Buffer, "le", 8)],
+      votingProgram.programId,
+    );
+    const poll = await votingProgram.account.poll.fetch(pollAddress);
+
+    // Ensure candidate count is updated
+    expect(poll.candidateAmount.toNumber()).toBe(2);
 
     const [pinkAddress] = PublicKey.findProgramAddressSync(
       [new anchor.BN(1).toArrayLike(Buffer, "le", 8), Buffer.from("Pink")],
@@ -87,6 +98,7 @@ describe("Voting", () => {
     expect(candidate.candidateVotes.toNumber()).toBe(1);
   });
 
+
   it("prevent double voting", async () => {
     try {
       await votingProgram.methods.vote("Pink", new anchor.BN(1)).rpc();
@@ -102,3 +114,4 @@ describe("Voting", () => {
 
  
 });
+
