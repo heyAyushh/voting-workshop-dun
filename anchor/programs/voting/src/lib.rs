@@ -2,7 +2,9 @@
 
 use anchor_lang::prelude::*;
 
+
 declare_id!("3nz2i8Ts2Nms1y9PG6JzsMoMtywho2TdLimqfpuzLYw5");
+
 
 #[program]
 pub mod voting {
@@ -40,6 +42,7 @@ pub mod voting {
 
         Ok(())
     }
+
 
     pub fn vote(ctx: Context<Vote>, _candidate_name: String, _poll_id: u64) -> Result<()> {
         let poll = &mut ctx.accounts.poll; // Fetch poll account

@@ -53,7 +53,6 @@ describe("Voting", () => {
       );
       const candidate = await votingProgram.account.candidate.fetch(candidateAddress);
       console.log(`Candidate ${name} Initialized:`, candidate);
-
       expect(candidate.candidateVotes.toNumber()).toBe(0);
       expect(candidate.candidateName).toBe(name);
     }
