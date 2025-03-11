@@ -20,7 +20,7 @@ export function useVotingProgram() {
 
   const accounts = useQuery({
     queryKey: ['voting', 'all', { cluster }],
-    queryFn: () => program.account.voting.all(),
+    queryFn: () => (program.account as any).voting.all(),
   })
 
   const getProgramAccount = useQuery({
@@ -31,8 +31,8 @@ export function useVotingProgram() {
   const initialize = useMutation({
     mutationKey: ['voting', 'initialize', { cluster }],
     mutationFn: (keypair: Keypair) =>
-      program.methods.initialize().accounts({ voting: keypair.publicKey }).signers([keypair]).rpc(),
-    onSuccess: (signature) => {
+      (program.methods as any).initialize().accounts({ voting: keypair.publicKey }).signers([keypair]).rpc(),
+    onSuccess: (signature: string) => {
       transactionToast(signature)
       return accounts.refetch()
     },
@@ -55,13 +55,13 @@ export function useVotingProgramAccount({ account }: { account: PublicKey }) {
 
   const accountQuery = useQuery({
     queryKey: ['voting', 'fetch', { cluster, account }],
-    queryFn: () => program.account.voting.fetch(account),
+    queryFn: () => (program.account as any).voting.fetch(account),
   })
 
   const closeMutation = useMutation({
     mutationKey: ['voting', 'close', { cluster, account }],
-    mutationFn: () => program.methods.close().accounts({ voting: account }).rpc(),
-    onSuccess: (tx) => {
+    mutationFn: () => (program.methods as any).close().accounts({ voting: account }).rpc(),
+    onSuccess: (tx: string) => {
       transactionToast(tx)
       return accounts.refetch()
     },
@@ -69,8 +69,8 @@ export function useVotingProgramAccount({ account }: { account: PublicKey }) {
 
   const decrementMutation = useMutation({
     mutationKey: ['voting', 'decrement', { cluster, account }],
-    mutationFn: () => program.methods.decrement().accounts({ voting: account }).rpc(),
-    onSuccess: (tx) => {
+    mutationFn: () => (program.methods as any).decrement().accounts({ voting: account }).rpc(),
+    onSuccess: (tx: string) => {
       transactionToast(tx)
       return accountQuery.refetch()
     },
@@ -78,8 +78,8 @@ export function useVotingProgramAccount({ account }: { account: PublicKey }) {
 
   const incrementMutation = useMutation({
     mutationKey: ['voting', 'increment', { cluster, account }],
-    mutationFn: () => program.methods.increment().accounts({ voting: account }).rpc(),
-    onSuccess: (tx) => {
+    mutationFn: () => (program.methods as any).increment().accounts({ voting: account }).rpc(),
+    onSuccess: (tx: string) => {
       transactionToast(tx)
       return accountQuery.refetch()
     },
@@ -87,8 +87,8 @@ export function useVotingProgramAccount({ account }: { account: PublicKey }) {
 
   const setMutation = useMutation({
     mutationKey: ['voting', 'set', { cluster, account }],
-    mutationFn: (value: number) => program.methods.set(value).accounts({ voting: account }).rpc(),
-    onSuccess: (tx) => {
+    mutationFn: (value: number) => (program.methods as any).set(value).accounts({ voting: account }).rpc(),
+    onSuccess: (tx: string) => {
       transactionToast(tx)
       return accountQuery.refetch()
     },

@@ -1,5 +1,5 @@
 'use client'
-
+import { motion } from "framer-motion";
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { IconRefresh } from '@tabler/icons-react'
@@ -187,54 +187,81 @@ export function AccountTokens({ address }: { address: PublicKey }) {
 }
 
 export function AccountTransactions({ address }: { address: PublicKey }) {
-  const query = useGetSignatures({ address })
-  const [showAll, setShowAll] = useState(false)
+  const query = useGetSignatures({ address });
+  const [showAll, setShowAll] = useState(false);
 
   const items = useMemo(() => {
-    if (showAll) return query.data
-    return query.data?.slice(0, 5)
-  }, [query.data, showAll])
+    if (showAll) return query.data;
+    return query.data?.slice(0, 5);
+  }, [query.data, showAll]);
 
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between">
-        <h2 className="text-2xl font-bold">Transaction History</h2>
+    <motion.div
+      className="space-y-4 w-full p-4 rounded-lg bg-gray-900 shadow-lg"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-white">Transaction History</h2>
         <div className="space-x-2">
           {query.isLoading ? (
             <span className="loading loading-spinner"></span>
           ) : (
-            <button className="btn btn-sm btn-outline" onClick={() => query.refetch()}>
+            <button
+              className="btn btn-sm btn-outline hover:bg-gray-700 transition"
+              onClick={() => query.refetch()}
+            >
               <IconRefresh size={16} />
             </button>
           )}
         </div>
       </div>
-      {query.isError && <pre className="alert alert-error">Error: {query.error?.message.toString()}</pre>}
+
+      {/* Error Handling */}
+      {query.isError && (
+        <motion.pre
+          className="alert alert-error"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          Error: {query.error?.message.toString()}
+        </motion.pre>
+      )}
+
+      {/* Transactions Table */}
       {query.isSuccess && (
-        <div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           {query.data.length === 0 ? (
-            <div>No transactions found.</div>
+            <div className="text-white">No transactions found.</div>
           ) : (
-            <table className="table border-4 rounded-lg border-separate border-base-300">
+            <table className="table w-full border-2 rounded-lg border-separate border-gray-700">
               <thead>
-                <tr>
-                  <th>Signature</th>
-                  <th className="text-right">Slot</th>
-                  <th>Block Time</th>
-                  <th className="text-right">Status</th>
+                <tr className="bg-gray-800 text-white">
+                  <th className="p-3">Signature</th>
+                  <th className="p-3 text-right">Slot</th>
+                  <th className="p-3">Block Time</th>
+                  <th className="p-3 text-right">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {items?.map((item) => (
-                  <tr key={item.signature}>
-                    <th className="font-mono">
+                  <motion.tr
+                    key={item.signature}
+                    className="hover:bg-gray-800 transition-all duration-200 text-white"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <td className="p-3 font-mono">
                       <ExplorerLink path={`tx/${item.signature}`} label={ellipsify(item.signature, 8)} />
-                    </th>
-                    <td className="font-mono text-right">
+                    </td>
+                    <td className="p-3 font-mono text-right">
                       <ExplorerLink path={`block/${item.slot}`} label={item.slot.toString()} />
                     </td>
-                    <td>{new Date((item.blockTime ?? 0) * 1000).toISOString()}</td>
-                    <td className="text-right">
+                    <td className="p-3">{new Date((item.blockTime ?? 0) * 1000).toISOString()}</td>
+                    <td className="p-3 text-right">
                       {item.err ? (
                         <div className="badge badge-error" title={JSON.stringify(item.err)}>
                           Failed
@@ -243,25 +270,33 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
                         <div className="badge badge-success">Success</div>
                       )}
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
+
+                {/* Show More / Show Less Button */}
                 {(query.data?.length ?? 0) > 5 && (
                   <tr>
-                    <td colSpan={4} className="text-center">
-                      <button className="btn btn-xs btn-outline" onClick={() => setShowAll(!showAll)}>
-                        {showAll ? 'Show Less' : 'Show All'}
-                      </button>
+                    <td colSpan={4} className="text-center p-3">
+                      <motion.button
+                        className="btn btn-xs btn-outline hover:bg-gray-700 transition"
+                        onClick={() => setShowAll(!showAll)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {showAll ? "Show Less" : "Show All"}
+                      </motion.button>
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           )}
-        </div>
+        </motion.div>
       )}
-    </div>
-  )
+    </motion.div>
+  );
 }
+
 
 function BalanceSol({ balance }: { balance: number }) {
   return <span>{Math.round((balance / LAMPORTS_PER_SOL) * 100000) / 100000}</span>
