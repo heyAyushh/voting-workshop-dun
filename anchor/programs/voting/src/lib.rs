@@ -2,7 +2,9 @@
 
 use anchor_lang::prelude::*;
 
-declare_id!("F69hmYgN88iUHSmcjF74sJtB4UCDjMyq9ZsExJj1swSp");
+
+declare_id!("A3CVju9bAdZjzE99ExGL8zn6yUN4ifT8zj36vVFkHoid");
+
 
 #[program]
 pub mod voting {
@@ -39,13 +41,22 @@ Ok(())
 
 
     pub fn vote(ctx: Context<Vote>, _candidate_name: String, _poll_id: u64) -> Result<()> {
-        let candidate = &mut ctx.accounts.candidate;
-        candidate.candidate_votes += 1;
-
-        msg!("Voted for candidate: {}", candidate.candidate_name);
-        msg!("Votes: {}", candidate.candidate_votes);
-        Ok(())
-    }
+      let poll = &ctx.accounts.poll;
+      let candidate = &mut ctx.accounts.candidate;
+      
+      let current_time = Clock::get()?.unix_timestamp as u64;
+  msg!("current time {}",current_time);
+      // Ensure voting happens within poll_start and poll_end
+      require!(current_time >= poll.poll_start , ErrorCode::PollNotStarted);
+      require!(current_time <= poll.poll_end, ErrorCode::PollEnded);
+  
+      candidate.candidate_votes += 1;
+  
+      msg!("Voted for candidate: {}", candidate.candidate_name);
+      msg!("Votes: {}", candidate.candidate_votes);
+      Ok(())
+  }
+  
 
 }
 
@@ -129,4 +140,17 @@ pub struct Poll {
     pub poll_start: u64,
     pub poll_end: u64,
     pub candidate_amount: u64,
+}
+
+
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Provided value is not a valid Unix timestamp.")]
+    InvalidUnixTimestamp,
+
+    #[msg("Voting has not started yet.")]
+    PollNotStarted,
+
+    #[msg("Voting has ended.")]
+    PollEnded,
 }

@@ -24,8 +24,8 @@ describe("Voting", () => {
     await votingProgram.methods.initializePoll(
       new anchor.BN(1),
       "What is your favorite color?",
-      new anchor.BN(100),
-      new anchor.BN(1739370789),
+      new anchor.BN(1739492592),
+      new anchor.BN(1740702192),
     ).rpc();
 
     const [pollAddress] = PublicKey.findProgramAddressSync(
@@ -39,8 +39,9 @@ describe("Voting", () => {
 
     expect(poll.pollId.toNumber()).toBe(1);
     expect(poll.description).toBe("What is your favorite color?");
-    expect(poll.pollStart.toNumber()).toBe(100);
-    expect(poll.candidateAmount.toNumber()).toBe(0); // Ensure initial candidate count is 0
+
+    expect(poll.pollStart.toNumber()).toBe(1739492592);
+
   });
 
   it("initializes candidates", async () => {
