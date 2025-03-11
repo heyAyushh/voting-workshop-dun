@@ -39,10 +39,13 @@ describe("Voting", () => {
 
     expect(poll.pollId.toNumber()).toBe(1);
     expect(poll.description).toBe("What is your favorite color?");
+
     expect(poll.pollStart.toNumber()).toBe(1739492592);
+
   });
 
   it("initializes candidates", async () => {
+    // Initialize candidates
     await votingProgram.methods.initializeCandidate(
       "Pink",
       new anchor.BN(1),
@@ -51,6 +54,15 @@ describe("Voting", () => {
       "Blue",
       new anchor.BN(1),
     ).rpc();
+
+    const [pollAddress] = PublicKey.findProgramAddressSync(
+      [new anchor.BN(1).toArrayLike(Buffer, "le", 8)],
+      votingProgram.programId,
+    );
+    const poll = await votingProgram.account.poll.fetch(pollAddress);
+
+    // Ensure candidate count is updated
+    expect(poll.candidateAmount.toNumber()).toBe(2);
 
     const [pinkAddress] = PublicKey.findProgramAddressSync(
       [new anchor.BN(1).toArrayLike(Buffer, "le", 8), Buffer.from("Pink")],
